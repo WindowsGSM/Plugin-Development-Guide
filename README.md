@@ -1,10 +1,16 @@
 # Plugin-Development-Guide
 🧩 WindowsGSM Plugin Development Guide - Support more game servers by creating and installing plugins!
 
+
+#### Support server
+https://discord.gg/bGc7t2R
+
 #### Table of Contents:
 1. [Introduction](#Introduction)
 1. [Basic Knowledge](#Knowledge)
 1. [Set up a plugin development environment](#Set-up-a-plugin-development-environment) 
+1. [Creating Your First Plugin](#Creating-your-first-plugin) 
+1. [Testing Your First Plugin](#Testing-your-first-plugin) 
 
 <a name="Introduction"/>
 
@@ -39,7 +45,7 @@ WindowsGSM scan the plugins folder and loads **{PLUGIN_NAME}.cs**, **{PLUGIN_NAM
 <a name="Set-up-a-plugin-development-environment"/>
 
 ## Set up a plugin development environment
-As you know, most game servers use steamcmd to install and update the server. WindowsGSM already created [SteamCMDAgent](https://github.com/WindowsGSM/WindowsGSM/blob/master/WindowsGSM/GameServer/Engine/SteamCMDAgent.cs) class for inheritance purpose, so adding a game server that uses steamcmd is much easier than adding a server that does not support steamcmd. Now let's set up a plugin development environment.
+Now let's set up a plugin development environment.
 
 #### Prerequisites
 1. [.NET Framework 4.7.2](https://dotnet.microsoft.com/download/dotnet-framework/net472)
@@ -55,4 +61,141 @@ Open **WindowsGSM.sln** with Visual Studio 2019
 ![](https://windowsgsm.com/assets/images/plugin-demos/vs-plugins.png)
 
 The plugin development environment is set up! 🥳
+
+<a name="Creating-your-first-plugin"/>
+
+## Creating Your First Plugin
+As you know, most game servers use steamcmd to install and update the server. WindowsGSM already created [SteamCMDAgent](https://github.com/WindowsGSM/WindowsGSM/blob/master/WindowsGSM/GameServer/Engine/SteamCMDAgent.cs) class for inheritance purpose, so adding a game server that uses steamcmd is much easier than adding a server that does not support steamcmd.
+
+### 1. Create a new plugin script
+Create a **MyFirstPlugin.cs** file inside **Plugins** folder on WindowsGSM-Plugin-Development project
+
+### 2. Edit the plugin script
+#### Add WindowsGSM references
+```cs
+using WindowsGSM.Functions;
+using WindowsGSM.GameServer.Engine;
+using WindowsGSM.GameServer.Query;
+using Newtonsoft.Json.Linq;
+```
+
+#### Change the namespace to WindowsGSM.Plugins
+```cs
+namespace WindowsGSM.Plugins
+```
+
+#### Setting up plugin info
+```cs
+public Plugin Plugin = new Plugin
+{
+    name = "WindowsGSM.XXXXX",
+    author = "Your name",
+    description = "🧩 WindowsGSM plugin for supporting XXXXXX Server",
+    version = "1.0",
+    url = "https://github.com/XXXXXXXX/XXXXXXXX",
+    color = "#ffffff"
+};
+```
+
+#### Continue read ...
+
+<details>
+  <summary>Plugin Format that inherits SteamCMDAgent</summary>
+  
+  #### Set SteamCMDAgent as parent 
+  ```cs
+  public class MyFirstPlugin : SteamCMDAgent
+  ```
+  
+  #### Add constructor and properties
+  ```cs
+  public MyFirstPlugin(ServerConfig serverData) : base(serverData) => base.serverData = _serverData = serverData;
+  private readonly ServerConfig _serverData;
+  ```
+  
+  #### Add properties for SteamCMD installer
+  ```cs
+  public override bool loginAnonymous => false; // true if allows login anonymous on steamcmd, else false
+  public override string AppId => ""; // Value of app_update <AppId> 
+  ```
+  
+  #### Add standard variables
+  ```cs
+  public override string StartPath => ""; // Game server start path
+  public string FullName = ""; // Game server FullName
+  public bool AllowsEmbedConsole = false;  // Does this server support output redirect?
+  public int PortIncrements = 1; // This tells WindowsGSM how many ports should skip after installation
+  public object QueryMethod = null; // Query method. Accepted value: null or new A2S() or new FIVEM() or new UT3()
+
+  public string Port = ""; // Default port
+  public string QueryPort = ""; // Default query port
+  public string Defaultmap = ""; // Default map name
+  public string Maxplayers = ""; // Default maxplayers
+  public string Additional = ""; // Additional server start parameter
+  ```
+  
+  #### Add standard functions
+  ```cs
+  public async void CreateServerCFG() { } // Creates a default cfg for the game server after installation
+
+  public async Task<Process> Start() { return null; } // Start server function, return its Process
+  public async Task Stop(Process p) { return null; } // Stop server function
+  ```
+  
+  Done! All necessary variables and functions were all created. you can now start edit your script and create your first plugin!
+  
+  #### Example plugins with plugin format that inherits SteamCMDAgent [WindowsGSM.ARMA3](https://github.com/BattlefieldDuck/WindowsGSM.ARMA3)
+  
+</details>
+
+<details>
+  <summary>Classic Plugin Format</summary>
+
+  #### Add constructor and properties
+  ```cs
+  public MyFirstPlugin(ServerConfig serverData) => _serverData = serverData;
+  private readonly ServerConfig _serverData;
+  public string Error, Notice;
+  ```
+
+  #### Add standard variables
+  ```cs
+  public string StartPath = ""; // Game server start path
+  public string FullName = ""; // Game server FullName
+  public bool AllowsEmbedConsole = false;  // Does this server support output redirect?
+  public int PortIncrements = 1; // This tells WindowsGSM how many ports should skip after installation
+  public object QueryMethod = null; // Query method. Accepted value: null or new A2S() or new FIVEM() or new UT3()
+
+  public string Port = ""; // Default port
+  public string QueryPort = ""; // Default query port
+  public string Defaultmap = ""; // Default map name
+  public string Maxplayers = ""; // Default maxplayers
+  public string Additional = ""; // Additional server start parameter
+  ```
+
+  #### Add standard functions
+  ```cs
+  public async void CreateServerCFG() { } // Creates a default cfg for the game server after installation
+
+  public async Task<Process> Start() { return null; } // Start server function, return its Process
+  public async Task Stop(Process p) { return null; } // Stop server function
+  public async Task<Process> Install() { return null; } // Install server function
+  public async Task<Process> Update() { return null; } // Update server function
+
+  public bool IsInstallValid() { return false; } // Check if the installation is successful
+  public bool IsImportValid(string path) { return false; } // Check is the directory valid for import
+
+  public string GetLocalBuild() { return ""; } // Return local server version
+  public async Task<string> GetRemoteBuild() { return ""; } // Return latest server version
+  ```
+  
+  Done! All necessary variables and functions were all created. you can now start edit your script and create your first plugin! 
+  
+  #### Example plugins with classic plugin format [WindowsGSM.PaperMC](https://github.com/BattlefieldDuck/WindowsGSM.PaperMC)
+  
+</details>
+
+<a name="Testing-your-first-plugin"/>
+
+## Testing Your First Plugin
 
