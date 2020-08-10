@@ -139,12 +139,12 @@ public Plugin Plugin = new Plugin
   public async void CreateServerCFG() { } // Creates a default cfg for the game server after installation
 
   public async Task<Process> Start() { return null; } // Start server function, return its Process
-  public async Task Stop(Process p) { return null; } // Stop server function
+  public async Task Stop(Process p) { } // Stop server function
   ```
   
   Done! All necessary variables and functions were all created. you can now start edit your script and create your first plugin!
   
-  #### Example plugins with plugin format that inherits SteamCMDAgent [WindowsGSM.ARMA3](https://github.com/BattlefieldDuck/WindowsGSM.ARMA3)
+  #### Example plugin with plugin format that inherits SteamCMDAgent: [WindowsGSM.ARMA3](https://github.com/BattlefieldDuck/WindowsGSM.ARMA3)
   
 </details>
 
@@ -178,7 +178,7 @@ public Plugin Plugin = new Plugin
   public async void CreateServerCFG() { } // Creates a default cfg for the game server after installation
 
   public async Task<Process> Start() { return null; } // Start server function, return its Process
-  public async Task Stop(Process p) { return null; } // Stop server function
+  public async Task Stop(Process p) { } // Stop server function
   public async Task<Process> Install() { return null; } // Install server function
   public async Task<Process> Update() { return null; } // Update server function
 
@@ -191,7 +191,7 @@ public Plugin Plugin = new Plugin
   
   Done! All necessary variables and functions were all created. you can now start edit your script and create your first plugin! 
   
-  #### Example plugins with classic plugin format [WindowsGSM.PaperMC](https://github.com/BattlefieldDuck/WindowsGSM.PaperMC)
+  #### Example plugin with classic plugin format: [WindowsGSM.PaperMC](https://github.com/BattlefieldDuck/WindowsGSM.PaperMC)
   
 </details>
 
@@ -199,3 +199,7 @@ public Plugin Plugin = new Plugin
 
 ## Testing Your First Plugin
 
+![Install Plugin](https://windowsgsm.com/assets/images/plugin-demos/install-plugins.png)
+
+1. Set **Startup Project** to **WindowsGSM-Plugin-Development** and click **Start** to start installing your plugins.
+1. Set **Startup Project** to **WindowsGSM** and click **Start** to start WindowsGSM and start debug!
